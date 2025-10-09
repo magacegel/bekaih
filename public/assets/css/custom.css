@@ -1,0 +1,126 @@
+/**
+ *
+ * You can write your CSS code here, DO NOT touch the default JavaScript file
+ * because it will make it harder for you to update.
+ * 
+ */
+
+/*# sourceMappingURL=custom.css.map */
+.profile_pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-size: 100% auto !important ;
+  position: absolute;
+  left: 0px;
+}
+
+.modal-md {
+  max-width: 600px;
+}
+.error_message {
+  color: red;
+}
+.eng {
+  font-size: smaller;
+  font-style: italic;
+}
+.report_detail_table 
+{
+  width: 100%;
+  font-size: 16px;
+}
+.report_detail_table td {
+  padding:8px;
+  vertical-align: top;
+}
+.report_detail_table th {
+  padding:30px 8px;
+}
+
+.report_signature_table {
+ width:80%;
+ margin: 0 auto;
+ margin-bottom: 80px;
+ margin-top: 0px;
+}
+.report_signature_table hr {
+  margin: 5px;
+  border-color: #999;
+}
+
+.rotate span{
+  -ms-writing-mode: tb-rl;
+  -webkit-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
+/* custom buat edit form three biar ngga kaco */
+.dim_lvl_three {
+  width: 48px !important;
+  min-width: 48px !important;
+}
+.dim_lvl_three input {
+  margin-right: 2px;
+}
+
+.form_three_wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* mengecilkan tanda percent agar muat */
+span.percent {
+  font-size: 10px !important;
+}
+
+/* do not group these rules */
+*::-webkit-input-placeholder {
+    color: #CCC !important;
+}
+*:-moz-placeholder {
+    /* FF 4-18 */
+    color: #CCC !important;
+    opacity: 1;
+}
+*::-moz-placeholder {
+    /* FF 19+ */
+    color: #CCC !important;
+    opacity: 1;
+}
+*:-ms-input-placeholder {
+    /* IE 10+ */
+    color: #CCC !important;
+}
+*::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #CCC !important;
+}
+*::placeholder {
+    /* modern browser */
+    color: #CCC !important;
+}
+
+
+
+.red {
+  background: #ffcbcb;
+}
+.yellow {
+  background: #ffffdd;
+}
+.green {
+  background: #7aff99;
+}
+.no-color {
+  background: #dddddd;
+}
+.transparent {
+  color: transparent;
+  background: transparent;
+}
+.transparent span {
+  display: none;
+}

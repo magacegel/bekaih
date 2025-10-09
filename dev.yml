@@ -1,0 +1,59 @@
+services:
+  php-fpm:
+    build: docker/php-fpm
+    container_name: ut-php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html/
+      - ./docker/php-fpm/local.ini:/usr/local/etc/php/conf.d/local.ini
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+    links:
+      - db:ut-db
+
+  nginx:
+    build: docker/nginx
+    container_name: ut-nginx
+    restart: unless-stopped
+    ports:
+      - 9009:7070
+    links:
+      - php-fpm
+    volumes:
+      - ./:/var/www/html/
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  db:
+    image: postgres:14
+    container_name: ut-db
+    restart: unless-stopped
+    ports:
+      - "5402:5432"
+    environment:
+      POSTGRES_PASSWORD: b4t9Hn6ZYM49
+      POSTGRES_USER: ut_usr
+      POSTGRES_DB: ut_db
+    volumes:
+      - db:/data/postgres
+      - ./database:/database
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet:  10.250.35.0/24
+
+volumes:
+  db:

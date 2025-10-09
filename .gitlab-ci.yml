@@ -1,0 +1,108 @@
+variables:
+  GIT_DEPTH: 0 # Disable shallow clone
+  SOPS_VERSION: "v3.8.1"
+  LOCAL_BIN: "$CI_PROJECT_DIR/bin"
+
+stages:
+  - sonar-check
+  - dev_pull
+  - dev_container
+  - prod_pull
+  - prod_container
+
+dev_pull:
+  stage: dev_pull
+  before_script:
+    - 'which ssh-agent || ( apk update && apk add --no-cache openssh )'
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_STAGING" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - bash ./deploy.sh
+  environment:
+    name: staging
+    url: http://10.0.6.45:9009
+  only:
+    - main
+
+
+
+dev_container:
+  stage: dev_container
+  before_script:
+    - 'which ssh-agent || ( apk update && apk add --no-cache openssh )'
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_STAGING" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+  script:
+    - bash ./deploy.sh
+  environment:
+    name: staging
+    url: http://10.0.6.45:9009
+  when: manual
+  only:
+    - main
+
+
+prod_pull:
+  stage: prod_pull
+  before_script:
+    - 'which ssh-agent || ( apk update && apk add --no-cache openssh )'
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_PRD_INT" | tr -d '\r' > ~/.ssh/id_rsa_prd
+    - chmod 700 ~/.ssh/id_rsa_prd
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa_prd
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - bash ./deploy.sh
+  environment:
+    name: production
+    url: http://10.0.1.132:9009
+  when: manual
+  only:
+    - main
+
+
+prod_container:
+  stage: prod_container
+  before_script:
+    - 'which ssh-agent || ( apk update && apk add --no-cache openssh )'
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_PRD_INT" | tr -d '\r' > ~/.ssh/id_rsa_prd
+    - chmod 700 ~/.ssh/id_rsa_prd
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa_prd
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - bash ./deploy.sh
+  environment:
+    name: production
+    url: http://10.0.1.132:9009
+  when: manual
+  only:
+    - main
+
+
+sonarqube-check:
+  image: sonarsource/sonar-scanner-cli:latest
+  tags:
+    - shared-docker-executor
+  stage: sonar-check
+  script:
+    - sonar-scanner
+  when: manual
+  only:
+    - main
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    SONAR_SCANNER_OPTS: "-Xmx512m"
+    SONAR_HOST_URL: "$SONAR_HOST_URL"
+    SONAR_LOGIN: "$SONAR_TOKEN"
