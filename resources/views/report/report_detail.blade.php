@@ -20,6 +20,86 @@
   .first_column {
     white-space: nowrap;
   }
+  .nav-tabs .nav-item {
+    margin-right: 4px;
+  }
+  .rotate span{
+    -ms-writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+  .ship_type {
+    font-weight: normal;
+    font-size: 13px;
+  }
+  .first_column {
+    white-space: nowrap;
+  }
+  .floating-form-tabs {
+  position: fixed;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  background: #fff;
+  box-shadow: 0 3px 16px 0 rgba(0,0,0,0.10);
+  border-radius: 16px 0 0 16px;
+  padding: 6px 2px;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.form-tab-btn {
+  width: 38px;
+  height: 38px;
+  margin: 6px 0;
+  padding: 0;
+  background: transparent;
+  color: #263e71;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: none;
+  outline: none;
+}
+.form-tab-btn.active,
+.form-tab-btn:hover {
+  background: #295ad6;
+  color: #fff;
+}
+.shortcut-badge-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 15px;
+  border-radius: 50%;
+  background: #295ad6 !important;
+  color: #fff;
+  margin: 0;
+  box-shadow: 0 1px 4px #c3d0ff4d;
+  text-align: center;
+  line-height: 28px;
+}
+.form-tab-btn .badge {
+  margin: 0;
+  padding: 0;
+  line-height: 28px;
+  font-size: 15px;
+  background: #295ad6 !important;
+  color: #fff;
+  margin-bottom: 0;
+}
 </style>
 
 
@@ -57,6 +137,8 @@
     <div class="card">
 
       <div class="card-body bg-light">
+        <!-- Floating shortcuts rendered dynamically -->
+        <div id="floating-form-tabs" class="floating-form-tabs" style="display:none;"></div>
 
 
 
@@ -476,6 +558,7 @@
                                 @endif
                               </div>
                             @endif
+                            <div id="form-block-{{ $form->id }}" data-form-name="{{ $form->name }}"></div>
                               <table class="form_table" border="1">
                                 <thead>
                                   <tr>
@@ -709,6 +792,7 @@
                                   @endif
                                 </div>
                               @endif
+                              <div id="form-block-{{ $form->id }}" data-form-name="{{ $form->name }}"></div>
                               <table class="form_table table_two" border="1">
                                 <thead>
                                   <tr>
@@ -898,7 +982,7 @@
                                   @endif
                                 </div>
                               @endif
-
+                                <div id="form-block-{{ $form->id }}" data-form-name="{{ $form->name }}"></div>
                                 <table class="form_table" border="1">
                                   <thead>
                                     <tr>
@@ -1852,7 +1936,7 @@
           }
         });
       });
-
+      
       // Function to handle image deletion
       function deleteImage(image_id) {
         Swal.fire({
@@ -1947,6 +2031,50 @@
       <?php }?>
 
     });
-  </script>
 
-  @endsection
+function renderFloatingTabs() {
+  var $activeTabBtn = $('.nav-link.active');
+  var openedTab = $activeTabBtn.attr('target') || "";
+  if (!openedTab || openedTab === '#main' || openedTab === '#history') {
+    $('#floating-form-tabs').hide().html('');
+    return;
+  }
+  var $forms = $(openedTab + ' [id^=form-block-]');
+  if ($forms.length === 0) {
+    $('#floating-form-tabs').hide().html('');
+    return;
+  }
+  var html = '';
+  $forms.each(function(idx, el){
+    var formName = $(el).data('form-name') || 'Form ' + (idx+1);
+    html += `
+      <button type="button" class="form-tab-btn"
+    title="${formName}"
+    onclick="scrollToForm('${el.id}')">
+    <span class='badge bg-primary mb-1 shortcut-badge-only'>${idx+1}</span>
+  </button>
+    `;
+  });
+  $('#floating-form-tabs').html(html).show();
+}
+$(document).ready(function(){
+  setTimeout(renderFloatingTabs, 200);
+  $('.nav-link').on('click', function() {
+    setTimeout(renderFloatingTabs, 150);
+  });
+});
+function scrollToForm(formBlockId) {
+  var el = document.getElementById(formBlockId);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('.form-tab-btn').removeClass('active');
+    var $tabPane = $('.tab-pane.show.active');
+    var idx = $tabPane.find('[id^=form-block-]').toArray().findIndex(div => div.id === formBlockId);
+    if (idx !== -1) {
+      $('.form-tab-btn').eq(idx).addClass('active');
+      setTimeout(() => $('.form-tab-btn').eq(idx).removeClass('active'), 1500);
+    }
+  }
+}
+</script>
+@endsection
