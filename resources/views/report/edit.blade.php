@@ -63,7 +63,11 @@
 
 
               <?php if($form){?>
-                <a href="<?=url('/report_detail');?>/<?=base64_encode($report->id);?>" class="btn btn-sm btn-secondary" style="float: right;margin-left: 10px;">Back</a>
+                <a href="<?= url('/report_detail/' . base64_encode($report->id) . '?tab=' . ($_GET['tab'] ?? '') . '&form_id=' . ($form->id ?? '')); ?>" 
+   class="btn btn-sm btn-secondary" style="float: right; margin-left: 10px;">
+   Back
+</a>
+
               <?php }?>
 
               <input type="submit" class="btn btn-sm btn-primary" style="float:right;" value="<?=$form ? 'Update':'Create';?> Form">
@@ -355,7 +359,11 @@
 
 
               <?php if($form){?>
-                <a href="<?=url('/report_detail');?>/<?=base64_encode($report->id);?>" class="btn btn-sm btn-secondary" style="float: right;margin-left: 10px;">Back</a>
+                <a href="<?= url('/report_detail/' . base64_encode($report->id) . '?tab=' . ($_GET['tab'] ?? '') . '&form_id=' . ($form->id ?? '')); ?>" 
+   class="btn btn-sm btn-secondary" style="float: right; margin-left: 10px;">
+   Back
+</a>
+
               <?php }?>
 
               <input type="submit" class="btn btn-sm btn-primary" style="float:right;" value="<?=$form ? 'Update':'Create';?> Form">
@@ -590,7 +598,11 @@
 
 
               <?php if($form){?>
-                <a href="<?=url('/report_detail');?>/<?=base64_encode($report->id);?>" class="btn btn-sm btn-secondary" style="float: right;margin-left: 10px;">Back</a>
+                <a href="<?= url('/report_detail/' . base64_encode($report->id) . '?tab=' . ($_GET['tab'] ?? '') . '&form_id=' . ($form->id ?? '')); ?>" 
+   class="btn btn-sm btn-secondary" style="float: right; margin-left: 10px;">
+   Back
+</a>
+
               <?php }?>
 
               <input type="submit" class="btn btn-sm btn-primary" style="float:right;" value="<?=$form ? 'Update':'Create';?> Form">
