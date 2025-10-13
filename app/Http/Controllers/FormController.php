@@ -170,14 +170,12 @@ class FormController extends Controller
 
 
         FormDataOne::where('form_id', $form->id)->delete();
-        if(FormDataOne::insert($all_data))
-        {
-
-          $response['status'] = 'success';
-          $response['message'] = 'Form has been updated';
-          $response['redirect_url'] = url('/report_detail').'/'.base64_encode($request->report_id).'?tab='.$tab;
-
-        }
+if(FormDataOne::insert($all_data))
+{
+  $response['status'] = 'success';
+  $response['message'] = 'Form has been updated';
+  $response['redirect_url'] = url('/report_detail').'/'.base64_encode($request->report_id).'?tab='.$tab.'&form_id='.$form->id;
+}
       }
 
       if($form && $form->form_type->form_data_format == 'two')
@@ -241,14 +239,12 @@ class FormController extends Controller
         }
 
         FormDataTwo::where('form_id', $form->id)->delete();
-        if(FormDataTwo::insert($all_data))
-        {
-
-          $response['status'] = 'success';
-          $response['message'] = 'Form has been updated';
-          $response['redirect_url'] = url('/report_detail').'/'.base64_encode($request->report_id).'?tab='.$tab;
-
-        }
+if(FormDataTwo::insert($all_data))
+{
+  $response['status'] = 'success';
+  $response['message'] = 'Form has been updated';
+  $response['redirect_url'] = url('/report_detail').'/'.base64_encode($request->report_id).'?tab='.$tab.'&form_id='.$form->id;
+}
       }
 
 
@@ -367,14 +363,12 @@ class FormController extends Controller
 
         // dd($all_data);
         FormDataThree::where('form_id', $form->id)->delete();
-        if(FormDataThree::insert($all_data))
-        {
-
-          $response['status'] = 'success';
-          $response['message'] = 'Form has been updated';
-          $response['redirect_url'] = url('/report_detail').'/'.base64_encode($request->report_id).'?tab='.$tab;
-
-        }
+if(FormDataThree::insert($all_data))
+{
+  $response['status'] = 'success';
+  $response['message'] = 'Form has been updated';
+  $response['redirect_url'] = url('/report_detail').'/'.base64_encode($request->report_id).'?tab='.$tab.'&form_id='.$form->id;
+}
       }
 
 
