@@ -3,6 +3,24 @@
 @section('content')
 
 <style type="text/css">
+  /* Animasi highlight untuk form yang baru di-update */
+.form_table {
+  transition: box-shadow 0.3s ease;
+}
+
+.form_table.highlight {
+  animation: highlightPulse 2s ease-in-out;
+}
+
+@keyframes highlightPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(41, 90, 214, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(41, 90, 214, 0.5);
+  }
+}
+  
   .nav-tabs .nav-item {
     margin-right: 4px;
   }
@@ -37,21 +55,106 @@
   .first_column {
     white-space: nowrap;
   }
-  .floating-form-tabs {
+  /* Container untuk shortcut navigation */
+/* Container untuk shortcut navigation */
+/* Container untuk shortcut navigation */
+.shortcut-container {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+}
+
+/* Toggle button (panah) */
+.shortcut-toggle {
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(135deg, #4FB3D9, #3A9DBF);
+  border: none;
+  border-radius: 50% 0 0 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1051;
+  transform: translateX(0);
+}
+
+.shortcut-toggle:hover {
+  background: linear-gradient(135deg, #3A9DBF, #2A8DAF);
+  box-shadow: -3px 3px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Toggle button bergeser saat panel terbuka */
+.shortcut-toggle.active {
+  transform: translateX(-65px);
+}
+
+/* Icon panah */
+.shortcut-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+  transition: transform 0.3s ease;
+}
+
+/* Rotasi panah saat terbuka */
+.shortcut-toggle.active svg {
+  transform: rotate(180deg);
+}
+
+/* Panel shortcut - MODIFIKASI dari .floating-form-tabs */
+.floating-form-tabs {
   position: fixed;
   top: 50%;
-  right: 18px;
-  transform: translateY(-50%);
-  background: #fff;
-  box-shadow: 0 3px 16px 0 rgba(0,0,0,0.10);
-  border-radius: 16px 0 0 16px;
-  padding: 6px 2px;
+  right: 0;
+  transform: translateY(-50%) translateX(100%);
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 15px 8px;
   z-index: 1050;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
+
+/* Panel saat terbuka */
+.floating-form-tabs.active {
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Custom scrollbar untuk panel */
+.floating-form-tabs::-webkit-scrollbar {
+  width: 4px;
+}
+
+.floating-form-tabs::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.floating-form-tabs::-webkit-scrollbar-thumb {
+  background: rgba(41, 90, 214, 0.5);
+  border-radius: 10px;
+}
+
+.floating-form-tabs::-webkit-scrollbar-thumb:hover {
+  background: rgba(30, 71, 168, 0.7);
+}
+
+/* Form tab button - TETAP PAKAI YANG ADA */
 .form-tab-btn {
   width: 38px;
   height: 38px;
@@ -71,11 +174,13 @@
   box-shadow: none;
   outline: none;
 }
+
 .form-tab-btn.active,
 .form-tab-btn:hover {
   background: #295ad6;
   color: #fff;
 }
+
 .shortcut-badge-only {
   display: flex;
   align-items: center;
@@ -91,6 +196,7 @@
   text-align: center;
   line-height: 28px;
 }
+
 .form-tab-btn .badge {
   margin: 0;
   padding: 0;
@@ -99,6 +205,155 @@
   background: #295ad6 !important;
   color: #fff;
   margin-bottom: 0;
+}
+.shortcut-action-buttons {
+  position: sticky;
+  top: 0;
+  background: transparent;
+  z-index: 10;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+/* Container untuk form navigation (scrollable) */
+.shortcut-form-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Custom scrollbar untuk form list */
+.shortcut-form-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.shortcut-form-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.shortcut-form-list::-webkit-scrollbar-thumb {
+  background: rgba(41, 90, 214, 0.5);
+  border-radius: 10px;
+}
+
+.shortcut-form-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(30, 71, 168, 0.7);
+}
+
+/* Button Add Image - warna biru seperti button aslinya */
+.shortcut-add-image-btn {
+  background: #17a2b8 !important;
+  color: white !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3) !important;
+  margin: 4px 0 !important;
+  border: none !important;
+  cursor: pointer !important;
+  flex-shrink: 0;
+}
+
+.shortcut-add-image-btn:hover {
+  background: #138496 !important;
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.5) !important;
+  transform: scale(1.05);
+}
+
+.shortcut-add-image-btn i {
+  font-size: 16px;
+}
+
+/* Button Add New Form - warna primary seperti button aslinya */
+.shortcut-add-form-btn {
+  background: #295ad6 !important;
+  color: white !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(41, 90, 214, 0.3) !important;
+  margin: 4px 0 !important;
+  border: none !important;
+  cursor: pointer !important;
+  flex-shrink: 0;
+}
+
+.shortcut-add-form-btn:hover {
+  background: #1e47a8 !important;
+  box-shadow: 0 4px 8px rgba(41, 90, 214, 0.5) !important;
+  transform: scale(1.05);
+}
+
+.shortcut-add-form-btn i {
+  font-size: 16px;
+}
+
+/* Active state untuk action buttons saat diklik */
+.shortcut-add-image-btn:active,
+.shortcut-add-form-btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 768px) {
+  .floating-form-tabs {
+    max-height: 350px;
+  }
+  
+  .shortcut-form-list {
+    min-height: 220px;
+  }
+  .shortcut-add-image-btn,
+  .shortcut-add-form-btn {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  .shortcut-add-image-btn i,
+  .shortcut-add-form-btn i {
+    font-size: 14px;
+  }
+  
+  .shortcut-action-buttons {
+    padding: 6px 0;
+  }
+  .shortcut-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .shortcut-toggle.active {
+    transform: translateX(-60px);
+  }
+  
+  .form-tab-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+  }
+  
+  .shortcut-badge-only {
+    width: 25px;
+    height: 25px;
+    font-size: 13px;
+    line-height: 25px;
+  }
 }
 </style>
 
@@ -138,10 +393,17 @@
 
       <div class="card-body bg-light">
         <!-- Floating shortcuts rendered dynamically -->
-        <div id="floating-form-tabs" class="floating-form-tabs" style="display:none;"></div>
-
-
-
+      <div class="shortcut-container">
+  <!-- Panel Shortcut Navigation -->
+  <div id="floating-form-tabs" class="floating-form-tabs" style="display:none;"></div>
+  
+  <!-- Toggle Button (Panah) -->
+  <button class="shortcut-toggle" id="shortcutToggle" type="button" style="display:none;">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+    </svg>
+  </button>
+</div>
         <!-- <h5 class="fw-semibold">Add New Report</h5> -->
         <ul class="nav nav-tabs" id="myTab" role="tablist" opened_tab="">
           <li class="nav-item" role="presentation">
@@ -1600,481 +1862,643 @@
   @section('js')
 
   <script src="/assets/modules/select2/dist/js/select2.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <script type="text/javascript">
-    $(document).ready(function(){
-
-      // Initialize select2
-      $('.select2').select2({
-        minimumInputLength: 3,
-        allowClear: true,
-        placeholder: '- Masukkan Nama/NUP -',
-        ajax: {
-          url: '<?=url('/user_list');?>',
-          dataType: 'json',
-          delay: 800,
-          data: params => ({ search: params.term }),
-          processResults: data => ({ results: data })
-        }
-      });
-
-      // Tab functionality
-      $('.nav-tabs button').click(function(e){
-        e.preventDefault();
-        $('.nav-link').removeClass('active');
-        $(this).addClass('active');
-        let target = $(this).attr('target');
-        $('.tab-pane').removeClass('show active');
-        $(target).addClass('show active');
-        $('.nav-tabs').attr('opened_tab', target.substring(1));
-      });
-
-      // Edit button functionality
-      $('.edit_btn').click(function(e){
-        e.preventDefault();
-        let form_id = $(this).attr('form_id');
-        let opened_tab = $('.nav-tabs').attr('opened_tab');
-        window.location.href = `<?=url('/form/edit');?>/${form_id}?tab=${opened_tab}`;
-      });
-
-      // Delete button functionality
-      $('.delete_btn').click(function(e){
-        e.preventDefault();
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            let form_id = $(this).attr('form_id');
-            $.ajax({
-              url: "<?=url('/form_data')?>",
-              type: 'post',
-              dataType: "json",
-              data: {
-                form_id: form_id,
-                action: 'delete',
-                _token: '{{ csrf_token() }}'
-              },
-              success: function(response) {
-                if(response.status === 'success') {
-                  iziToast.success({
-                    title: 'Success',
-                    message: response.message
-                  });
-                  let opened_tab = $('.nav-tabs').attr('opened_tab');
-                  window.location.href = `<?=url('/report_detail');?>/<?=base64_encode($report_id);?>?tab=${opened_tab}`;
-                } else {
-                  iziToast.error({
-                    title: 'Error',
-                    message: response.message
-                  });
-                }
-              },
-              error: () => {
-                iziToast.error({
-                  title: 'Error',
-                  message: 'An error occurred'
-                });
-              }
-            });
-          }
-        });
-      });
-
-      // Form type functionality
-      function check_format() {
-        let option = $('.form_type option:selected').attr('format');
-        let form_name = $('.form_type option:selected').attr('form_name');
-        $('.form_name').val(form_name);
-        $('.tr_three').toggle(option === 'three');
-        if(option === 'two') {
-          $('.form_name').val('TANK/HOLD DESCRIPTION : ');
-        }
-      }
-
-      $('.form_type').change(check_format);
-
-      // Add form button functionality
-      $('.add_form_btn').click(function(e){
-        e.preventDefault();
-        $(".total_line").val(<?=$total_line;?>).change();
-        let category = $(this).attr('category_name');
-        let category_id = $(this).attr('category_id');
-        let ship_type_id = $(this).attr('ship_type_id');
-        $('.category_id').val(category_id);
-        $('.ship_type_id').val(ship_type_id);
-        $('.modal_category').html(category);
-        $('#create_modal').modal('show');
-
-        $.ajax({
-          url: "<?=url('/report_data')?>",
-          type: 'post',
-          dataType: "json",
-          data: {
-            category_id: category_id,
-            ship_type_id: ship_type_id,
-            action: 'get_form_type',
-            _token: '{{ csrf_token() }}'
-          },
-          success: function(response) {
-            if(response.status === 'success') {
-              $('.form_type option').remove();
-              response.data.forEach((data, index) => {
-                $('.form_type').append(`<option value="${data.id}" format="${data.form_data_format}" form_name="${data.name} - " ${index === 0 ? 'selected' : ''}>${data.name}</option>`);
-              });
-              check_format();
-            }
-          },
-          error: () => {
-            iziToast.error({
-              title: 'Error',
-              message: 'An error occurred'
-            });
-          }
-        });
-      });
-
-      // Create form button functionality
-      $('.create_form_btn').click(function(e){
-        e.preventDefault();
-        if(!$('.form_name').val()) {
-          iziToast.error({
-            title: 'Error',
-            message: 'Please insert form name!'
-          });
-          $('.operator').focus();
-        } else {
-          $('#create_form').submit();
-        }
-      });
-
-      // Add image button functionality
-      $('.add_image_button').click(function(e){
-        e.preventDefault();
-        $('.modal_category_name').html($(this).attr('category_name'));
-        $('#upload_image_form .category_id').val($(this).attr('category_id'));
-        let category_id = $(this).attr('category_id');
-        let ship_type_id = $(this).attr('ship_type_id');
-        $('.category_id').val(category_id);
-        $('.ship_type_id').val(ship_type_id);
-
-        $.ajax({
-          url: "<?=url('/report_data')?>",
-          type: 'post',
-          dataType: "json",
-          data: {
-            category_id: category_id,
-            ship_type_id: ship_type_id,
-            action: 'get_form_type',
-            _token: '{{ csrf_token() }}'
-          },
-          success: function(response) {
-            if(response.status === 'success') {
-              $('.image_form_type option').remove();
-              response.data.forEach((data, index) => {
-                $('.image_form_type').append(`<option value="${data.id}" format="${data.form_data_format}" form_name="${data.name} - " ${index === 0 ? 'selected' : ''}>${data.name}</option>`);
-              });
-            }
-          },
-          error: () => {
-            iziToast.error({
-              title: 'Error',
-              message: 'An error occurred'
-            });
-          }
-        });
-
-        $('#upload_image_modal').modal('show');
-      });
-
-      // Add certificate button functionality
-      $('.add_certificate_button').click(() => $('#upload_certificate_modal').modal('show'));
-
-      // Delete certificate button functionality
-      $('.delete_certificate_button').click(function(e){
-        e.preventDefault();
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            let image_id = $(this).attr('image_id');
-            $.ajax({
-              url: "<?=url('/report_image')?>",
-              type: 'post',
-              dataType: "json",
-              data: {
-                image_id: image_id,
-                report_id: '<?=$report_id;?>',
-                action: 'delete_certificate',
-                _token: '{{ csrf_token() }}'
-              },
-              success: function(data) {
-                if(data.status === 'success') {
-                  iziToast.success({
-                    title: 'Success',
-                    message: data.message
-                  });
-                  $('.image_area_'+image_id).remove();
-                  refreshFsLightbox();
-                }
-              },
-              error: () => {
-                iziToast.error({
-                  title: 'Error',
-                  message: 'An error occurred'
-                });
-              }
-            });
-          }
-        });
-      });
-
-      // Delete image button functionality
-      $('.delete_image_button').click(function(e){
-        e.preventDefault();
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            let image_id = $(this).attr('image_id');
-            $.ajax({
-              url: "<?=url('/report_image')?>",
-              type: 'post',
-              dataType: "json",
-              data: {
-                image_id: image_id,
-                report_id: '<?=$report_id;?>',
-                action: 'delete',
-                _token: '{{ csrf_token() }}'
-              },
-              success: function(data) {
-                if(data.status === 'success') {
-                  iziToast.success({
-                    title: 'Success',
-                    message: data.message
-                  });
-                  $('.image_area_'+image_id).remove();
-                  refreshFsLightbox();
-                }
-              },
-              error: () => {
-                iziToast.error({
-                  title: 'Error',
-                  message: 'An error occurred'
-                });
-              }
-            });
-          }
-        });
-      });
-
-      // Upload image form submission
-      $('#upload_image_form').submit(function(e){
-        e.preventDefault();
-        let category_id = $('.selected_category_id').val();
-        $.ajax({
-          url: "<?=url('/report_image')?>",
-          type: 'POST',
-          data: new FormData(this),
-          processData: false,
-          contentType: false,
-          success: function(data) {
-            if(data.status === 'success') {
-              iziToast.success({
-                title: 'Success',
-                message: data.message
-              });
-              let image = `
-                <div class="image_area image_area_${data.image_id}">
-                  <button class="btn btn-sm btn-danger delete_image_button" image_id="${data.image_id}" style="display:inline;">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                  </button>
-                  <a data-fslightbox href="${data.image}">
-                    <img class="image_category image_category_${data.image_id}" src="${data.image_resized}">
-                  </a>
-                </div>`;
-              $(`.image_div_${category_id}_${data.form_type_id}`).append(image);
-              $('.delete_image_button[image_id="'+data.image_id+'"]').click(function(e){
-                e.preventDefault();
-                deleteImage($(this).attr('image_id'));
-              });
-              $('#upload_image_modal').modal('hide');
-              refreshFsLightbox();
-            } else {
-              iziToast.error({
-                title: 'Error',
-                message: data.message
-              });
-            }
-          },
-          error: function (err) {
-            if (err.status === 422) {
-              $.each(err.responseJSON.errors, function (i, error) {
-                let el = $('#upload_image_form').find('.'+i+'');
-                el.after($('<div class="error_message">'+error[0]+'</div>'));
-              });
-              $('.error_message').delay(5000).fadeOut('slow');
-            }
-          }
-        });
-      });
+<script type="text/javascript">
+  $(document).ready(function(){
+    
+    // ========== AUTO SCROLL & HIGHLIGHT FUNCTIONS ==========
+    // Auto scroll dan highlight form setelah update/back
+    function scrollToFormAndHighlight() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab');
+      const formId = urlParams.get('form_id');
       
-      // Function to handle image deletion
-      function deleteImage(image_id) {
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            $.ajax({
-              url: "<?=url('/report_image')?>",
-              type: 'post',
-              dataType: "json",
-              data: {
-                image_id: image_id,
-                report_id: '<?=$report_id;?>',
-                action: 'delete',
-                _token: '{{ csrf_token() }}'
-              },
-              success: function(data) {
-                if(data.status === 'success') {
-                  iziToast.success({
-                    title: 'Success',
-                    message: data.message
-                  });
-                  $('.image_area_'+image_id).remove();
-                  refreshFsLightbox();
-                }
-              },
-              error: () => {
-                iziToast.error({
-                  title: 'Error',
-                  message: 'An error occurred'
-                });
-              }
+      if (tab && formId) {
+        // Klik tab yang sesuai
+        $('#tab_' + tab).click();
+        
+        // Tunggu tab terbuka, lalu scroll ke form
+        setTimeout(function() {
+          const formElement = $('#form-block-' + formId);
+          
+          if (formElement.length > 0) {
+            // Scroll smooth ke form
+            $('html, body').animate({
+              scrollTop: formElement.offset().top - 100
+            }, 800, function() {
+              highlightForm(formElement);
             });
           }
-        });
+        }, 300);
       }
+    }
 
-      // Upload certificate form submission
-      $('#upload_certificate_form').submit(function(e){
-        e.preventDefault();
-        $.ajax({
-          url: "<?=url('/report_image')?>",
-          type: 'POST',
-          data: new FormData(this),
-          processData: false,
-          contentType: false,
-          success: function(data) {
-            if(data.status === 'success') {
-              iziToast.success({
-                title: 'Success',
-                message: data.message
-              });
-              let image = `
-                <div class="image_area image_area_${data.image_id}">
-                  <button class="btn btn-sm btn-danger delete_certificate_button" image_id="${data.image_id}" style="display:'inline';">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                  </button>
-                  <a data-fslightbox href="<?=url('storage');?>/${data.image}">
-                    <img class="image_category image_category_${data.image_id}" src="<?=url('storage');?>/${data.image}">
-                  </a>
-                </div>`;
-              $('.certificate_div').append(image);
-              $('#upload_certificate_modal').modal('hide');
-              refreshFsLightbox();
-            } else {
-              iziToast.error({
-                title: 'Error',
-                message: data.message
-              });
-            }
-          },
-          error: function (err) {
-            if (err.status === 422) {
-              $.each(err.responseJSON.errors, function (i, error) {
-                let el = $('#upload_image_form').find('.'+i+'');
-                el.after($('<div class="error_message">'+error[0]+'</div>'));
-              });
-              $('.error_message').delay(5000).fadeOut('slow');
-            }
-          }
+    // Fungsi untuk highlight form dengan animasi
+    function highlightForm($element) {
+      const $formTable = $element.next('.form_table');
+      
+      if ($formTable.length > 0) {
+        $formTable.css({
+          'box-shadow': '0 0 0 4px rgba(41, 90, 214, 0.5)',
+          'transition': 'all 0.3s ease'
         });
-      });
+        
+        setTimeout(function() {
+          $formTable.css({
+            'box-shadow': 'none'
+          });
+        }, 2000);
+      }
+    }
 
-      <?php if(isset($_GET['tab'])){?>
-        $('#tab_<?=$_GET['tab'];?>').click();
-      <?php }?>
+    // Panggil fungsi auto scroll saat halaman load
+    scrollToFormAndHighlight();
 
+    // ========== SELECT2 INITIALIZATION ==========
+    $('.select2').select2({
+      minimumInputLength: 3,
+      allowClear: true,
+      placeholder: '- Masukkan Nama/NUP -',
+      ajax: {
+        url: '<?=url('/user_list');?>',
+        dataType: 'json',
+        delay: 800,
+        data: params => ({ search: params.term }),
+        processResults: data => ({ results: data })
+      }
     });
 
+    // ========== TAB FUNCTIONALITY ==========
+    $('.nav-tabs button').click(function(e){
+      e.preventDefault();
+      $('.nav-link').removeClass('active');
+      $(this).addClass('active');
+      let target = $(this).attr('target');
+      $('.tab-pane').removeClass('show active');
+      $(target).addClass('show active');
+      $('.nav-tabs').attr('opened_tab', target.substring(1));
+    });
+
+    // ========== EDIT BUTTON FUNCTIONALITY ==========
+    $('.edit_btn').click(function(e){
+      e.preventDefault();
+      let form_id = $(this).attr('form_id');
+      let opened_tab = $('.nav-tabs').attr('opened_tab');
+      window.location.href = `<?=url('/form/edit');?>/${form_id}?tab=${opened_tab}`;
+    });
+
+    // ========== DELETE BUTTON FUNCTIONALITY ==========
+    $('.delete_btn').click(function(e){
+      e.preventDefault();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let form_id = $(this).attr('form_id');
+          $.ajax({
+            url: "<?=url('/form_data')?>",
+            type: 'post',
+            dataType: "json",
+            data: {
+              form_id: form_id,
+              action: 'delete',
+              _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+              if(response.status === 'success') {
+                iziToast.success({
+                  title: 'Success',
+                  message: response.message
+                });
+                let opened_tab = $('.nav-tabs').attr('opened_tab');
+                window.location.href = `<?=url('/report_detail');?>/<?=base64_encode($report_id);?>?tab=${opened_tab}`;
+              } else {
+                iziToast.error({
+                  title: 'Error',
+                  message: response.message
+                });
+              }
+            },
+            error: () => {
+              iziToast.error({
+                title: 'Error',
+                message: 'An error occurred'
+              });
+            }
+          });
+        }
+      });
+    });
+
+    // ========== FORM TYPE FUNCTIONALITY ==========
+    function check_format() {
+      let option = $('.form_type option:selected').attr('format');
+      let form_name = $('.form_type option:selected').attr('form_name');
+      $('.form_name').val(form_name);
+      $('.tr_three').toggle(option === 'three');
+      if(option === 'two') {
+        $('.form_name').val('TANK/HOLD DESCRIPTION : ');
+      }
+    }
+
+    $('.form_type').change(check_format);
+
+    // ========== ADD FORM BUTTON FUNCTIONALITY ==========
+    $('.add_form_btn').click(function(e){
+      e.preventDefault();
+      $(".total_line").val(<?=$total_line;?>).change();
+      let category = $(this).attr('category_name');
+      let category_id = $(this).attr('category_id');
+      let ship_type_id = $(this).attr('ship_type_id');
+      $('.category_id').val(category_id);
+      $('.ship_type_id').val(ship_type_id);
+      $('.modal_category').html(category);
+      $('#create_modal').modal('show');
+
+      $.ajax({
+        url: "<?=url('/report_data')?>",
+        type: 'post',
+        dataType: "json",
+        data: {
+          category_id: category_id,
+          ship_type_id: ship_type_id,
+          action: 'get_form_type',
+          _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+          if(response.status === 'success') {
+            $('.form_type option').remove();
+            response.data.forEach((data, index) => {
+              $('.form_type').append(`<option value="${data.id}" format="${data.form_data_format}" form_name="${data.name} - " ${index === 0 ? 'selected' : ''}>${data.name}</option>`);
+            });
+            check_format();
+          }
+        },
+        error: () => {
+          iziToast.error({
+            title: 'Error',
+            message: 'An error occurred'
+          });
+        }
+      });
+    });
+
+    // ========== CREATE FORM BUTTON FUNCTIONALITY ==========
+    $('.create_form_btn').click(function(e){
+      e.preventDefault();
+      if(!$('.form_name').val()) {
+        iziToast.error({
+          title: 'Error',
+          message: 'Please insert form name!'
+        });
+        $('.operator').focus();
+      } else {
+        $('#create_form').submit();
+      }
+    });
+
+    // ========== ADD IMAGE BUTTON FUNCTIONALITY ==========
+    $('.add_image_button').click(function(e){
+      e.preventDefault();
+      $('.modal_category_name').html($(this).attr('category_name'));
+      $('#upload_image_form .category_id').val($(this).attr('category_id'));
+      let category_id = $(this).attr('category_id');
+      let ship_type_id = $(this).attr('ship_type_id');
+      $('.category_id').val(category_id);
+      $('.ship_type_id').val(ship_type_id);
+
+      $.ajax({
+        url: "<?=url('/report_data')?>",
+        type: 'post',
+        dataType: "json",
+        data: {
+          category_id: category_id,
+          ship_type_id: ship_type_id,
+          action: 'get_form_type',
+          _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+          if(response.status === 'success') {
+            $('.image_form_type option').remove();
+            response.data.forEach((data, index) => {
+              $('.image_form_type').append(`<option value="${data.id}" format="${data.form_data_format}" form_name="${data.name} - " ${index === 0 ? 'selected' : ''}>${data.name}</option>`);
+            });
+          }
+        },
+        error: () => {
+          iziToast.error({
+            title: 'Error',
+            message: 'An error occurred'
+          });
+        }
+      });
+
+      $('#upload_image_modal').modal('show');
+    });
+
+    // ========== ADD CERTIFICATE BUTTON FUNCTIONALITY ==========
+    $('.add_certificate_button').click(() => $('#upload_certificate_modal').modal('show'));
+
+    // ========== DELETE CERTIFICATE BUTTON FUNCTIONALITY ==========
+    $('.delete_certificate_button').click(function(e){
+      e.preventDefault();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let image_id = $(this).attr('image_id');
+          $.ajax({
+            url: "<?=url('/report_image')?>",
+            type: 'post',
+            dataType: "json",
+            data: {
+              image_id: image_id,
+              report_id: '<?=$report_id;?>',
+              action: 'delete_certificate',
+              _token: '{{ csrf_token() }}'
+            },
+            success: function(data) {
+              if(data.status === 'success') {
+                iziToast.success({
+                  title: 'Success',
+                  message: data.message
+                });
+                $('.image_area_'+image_id).remove();
+                refreshFsLightbox();
+              }
+            },
+            error: () => {
+              iziToast.error({
+                title: 'Error',
+                message: 'An error occurred'
+              });
+            }
+          });
+        }
+      });
+    });
+
+    // ========== DELETE IMAGE BUTTON FUNCTIONALITY ==========
+    $('.delete_image_button').click(function(e){
+      e.preventDefault();
+      deleteImage($(this).attr('image_id'));
+    });
+
+    // Function to handle image deletion
+    function deleteImage(image_id) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: "<?=url('/report_image')?>",
+            type: 'post',
+            dataType: "json",
+            data: {
+              image_id: image_id,
+              report_id: '<?=$report_id;?>',
+              action: 'delete',
+              _token: '{{ csrf_token() }}'
+            },
+            success: function(data) {
+              if(data.status === 'success') {
+                iziToast.success({
+                  title: 'Success',
+                  message: data.message
+                });
+                $('.image_area_'+image_id).remove();
+                refreshFsLightbox();
+              }
+            },
+            error: () => {
+              iziToast.error({
+                title: 'Error',
+                message: 'An error occurred'
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // ========== UPLOAD IMAGE FORM SUBMISSION ==========
+    $('#upload_image_form').submit(function(e){
+      e.preventDefault();
+      let category_id = $('.selected_category_id').val();
+      $.ajax({
+        url: "<?=url('/report_image')?>",
+        type: 'POST',
+        data: new FormData(this),
+        processData: false,
+        contentType: false,
+        success: function(data) {
+          if(data.status === 'success') {
+            iziToast.success({
+              title: 'Success',
+              message: data.message
+            });
+            let image = `
+              <div class="image_area image_area_${data.image_id}">
+                <button class="btn btn-sm btn-danger delete_image_button" image_id="${data.image_id}" style="display:inline;">
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+                <a data-fslightbox href="${data.image}">
+                  <img class="image_category image_category_${data.image_id}" src="${data.image_resized}">
+                </a>
+              </div>`;
+            $(`.image_div_${category_id}_${data.form_type_id}`).append(image);
+            $('.delete_image_button[image_id="'+data.image_id+'"]').click(function(e){
+              e.preventDefault();
+              deleteImage($(this).attr('image_id'));
+            });
+            $('#upload_image_modal').modal('hide');
+            refreshFsLightbox();
+          } else {
+            iziToast.error({
+              title: 'Error',
+              message: data.message
+            });
+          }
+        },
+        error: function (err) {
+          if (err.status === 422) {
+            $.each(err.responseJSON.errors, function (i, error) {
+              let el = $('#upload_image_form').find('.'+i+'');
+              el.after($('<div class="error_message">'+error[0]+'</div>'));
+            });
+            $('.error_message').delay(5000).fadeOut('slow');
+          }
+        }
+      });
+    });
+
+    // ========== UPLOAD CERTIFICATE FORM SUBMISSION ==========
+    $('#upload_certificate_form').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+        url: "<?=url('/report_image')?>",
+        type: 'POST',
+        data: new FormData(this),
+        processData: false,
+        contentType: false,
+        success: function(data) {
+          if(data.status === 'success') {
+            iziToast.success({
+              title: 'Success',
+              message: data.message
+            });
+            let image = `
+              <div class="image_area image_area_${data.image_id}">
+                <button class="btn btn-sm btn-danger delete_certificate_button" image_id="${data.image_id}" style="display:'inline';">
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+                <a data-fslightbox href="<?=url('storage');?>/${data.image}">
+                  <img class="image_category image_category_${data.image_id}" src="<?=url('storage');?>/${data.image}">
+                </a>
+              </div>`;
+            $('.certificate_div').append(image);
+            $('#upload_certificate_modal').modal('hide');
+            refreshFsLightbox();
+          } else {
+            iziToast.error({
+              title: 'Error',
+              message: data.message
+            });
+          }
+        },
+        error: function (err) {
+          if (err.status === 422) {
+            $.each(err.responseJSON.errors, function (i, error) {
+              let el = $('#upload_image_form').find('.'+i+'');
+              el.after($('<div class="error_message">'+error[0]+'</div>'));
+            });
+            $('.error_message').delay(5000).fadeOut('slow');
+          }
+        }
+      });
+    });
+
+    // ========== TAB ACTIVATION FROM URL PARAMETER ==========
+    <?php if(isset($_GET['tab'])){?>
+      $('#tab_<?=$_GET['tab'];?>').click();
+    <?php }?>
+
+    // ========== FLOATING TABS FUNCTIONS ==========
+    // ========== FLOATING TABS FUNCTIONS WITH FIXED ACTION BUTTONS ==========
 function renderFloatingTabs() {
   var $activeTabBtn = $('.nav-link.active');
   var openedTab = $activeTabBtn.attr('target') || "";
+  
   if (!openedTab || openedTab === '#main' || openedTab === '#history') {
-    $('#floating-form-tabs').hide().html('');
+    $('#floating-form-tabs').hide().removeClass('active').html('');
+    $('#shortcutToggle').hide();
     return;
   }
+  
   var $forms = $(openedTab + ' [id^=form-block-]');
-  if ($forms.length === 0) {
-    $('#floating-form-tabs').hide().html('');
+  
+  // Dapatkan data dari button Add Image & Add New Form yang aktif
+  var $addImageBtn = $(openedTab).closest('.tab-pane').find('.add_image_button');
+  var $addFormBtn = $(openedTab).closest('.tab-pane').find('.add_form_btn');
+  
+  var categoryId = $addImageBtn.attr('category_id');
+  var categoryName = $addImageBtn.attr('category_name');
+  var shipTypeId = $addImageBtn.attr('ship_type_id');
+  
+  if ($forms.length === 0 && !categoryId) {
+    $('#floating-form-tabs').hide().removeClass('active').html('');
+    $('#shortcutToggle').hide();
     return;
   }
+  
   var html = '';
+  
+  // Container untuk Action Buttons (Fixed di atas)
+  html += '<div class="shortcut-action-buttons">';
+  
+  // Tambahkan Action Buttons jika ada categoryId
+  if (categoryId) {
+    html += `
+      <button type="button" 
+        class="shortcut-add-image-btn" 
+        title="Add Image"
+        data-category-id="${categoryId}"
+        data-category-name="${categoryName}"
+        data-ship-type-id="${shipTypeId}">
+        <i class="fa fa-image"></i>
+      </button>
+      <button type="button" 
+        class="shortcut-add-form-btn" 
+        title="Add New Form"
+        data-category-id="${categoryId}"
+        data-category-name="${categoryName}"
+        data-ship-type-id="${shipTypeId}">
+        <i class="fa fa-plus"></i>
+      </button>
+    `;
+  }
+  
+  html += '</div>';
+  
+  // Container untuk Form Navigation (Scrollable)
+  html += '<div class="shortcut-form-list">';
+  
+  // Tambahkan Form Navigation Buttons
   $forms.each(function(idx, el){
     var formName = $(el).data('form-name') || 'Form ' + (idx+1);
     html += `
       <button type="button" class="form-tab-btn"
-    title="${formName}"
-    onclick="scrollToForm('${el.id}')">
-    <span class='badge bg-primary mb-1 shortcut-badge-only'>${idx+1}</span>
-  </button>
+        title="${formName}"
+        onclick="scrollToForm('${el.id}')">
+        <span class='badge bg-primary mb-1 shortcut-badge-only'>${idx+1}</span>
+      </button>
     `;
   });
+  
+  html += '</div>';
+  
   $('#floating-form-tabs').html(html).show();
+  $('#shortcutToggle').show();
+  
+  // Bind click events untuk action buttons
+  bindActionButtons();
 }
-$(document).ready(function(){
-  setTimeout(renderFloatingTabs, 200);
-  $('.nav-link').on('click', function() {
-    setTimeout(renderFloatingTabs, 150);
+
+// ========== BIND ACTION BUTTONS EVENTS ==========
+function bindActionButtons() {
+  // Add Image Button Click
+  $('.shortcut-add-image-btn').off('click').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    var categoryId = $(this).data('category-id');
+    var categoryName = $(this).data('category-name');
+    var shipTypeId = $(this).data('ship-type-id');
+    
+    $('.modal_category_name').html(categoryName);
+    $('#upload_image_form .category_id').val(categoryId);
+    $('.ship_type_id').val(shipTypeId);
+    
+    // Load form types
+    $.ajax({
+      url: "<?=url('/report_data')?>",
+      type: 'post',
+      dataType: "json",
+      data: {
+        category_id: categoryId,
+        ship_type_id: shipTypeId,
+        action: 'get_form_type',
+        _token: '{{ csrf_token() }}'
+      },
+      success: function(response) {
+        if(response.status === 'success') {
+          $('.image_form_type option').remove();
+          response.data.forEach((data, index) => {
+            $('.image_form_type').append(`<option value="${data.id}" format="${data.form_data_format}" form_name="${data.name} - " ${index === 0 ? 'selected' : ''}>${data.name}</option>`);
+          });
+        }
+      }
+    });
+    
+    $('#upload_image_modal').modal('show');
   });
-});
-function scrollToForm(formBlockId) {
-  var el = document.getElementById(formBlockId);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    $('.form-tab-btn').removeClass('active');
-    var $tabPane = $('.tab-pane.show.active');
-    var idx = $tabPane.find('[id^=form-block-]').toArray().findIndex(div => div.id === formBlockId);
-    if (idx !== -1) {
-      $('.form-tab-btn').eq(idx).addClass('active');
-      setTimeout(() => $('.form-tab-btn').eq(idx).removeClass('active'), 1500);
+  
+  // Add New Form Button Click
+  $('.shortcut-add-form-btn').off('click').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    var categoryId = $(this).data('category-id');
+    var categoryName = $(this).data('category-name');
+    var shipTypeId = $(this).data('ship-type-id');
+    
+    $('.category_id').val(categoryId);
+    $('.ship_type_id').val(shipTypeId);
+    $('.modal_category').html(categoryName);
+    
+    // Load form types
+    $.ajax({
+      url: "<?=url('/report_data')?>",
+      type: 'post',
+      dataType: "json",
+      data: {
+        category_id: categoryId,
+        ship_type_id: shipTypeId,
+        action: 'get_form_type',
+        _token: '{{ csrf_token() }}'
+      },
+      success: function(response) {
+        if(response.status === 'success') {
+          $('.form_type option').remove();
+          response.data.forEach((data, index) => {
+            $('.form_type').append(`<option value="${data.id}" format="${data.form_data_format}" form_name="${data.name} - " ${index === 0 ? 'selected' : ''}>${data.name}</option>`);
+          });
+          check_format();
+        }
+      }
+    });
+    
+    $('#create_modal').modal('show');
+  });
+}
+
+    // Render floating tabs saat halaman load
+    setTimeout(renderFloatingTabs, 200);
+    
+    // Re-render saat ganti tab
+    $('.nav-link').on('click', function() {
+      setTimeout(renderFloatingTabs, 150);
+    });
+    
+    // Toggle button click event
+    $('#shortcutToggle').on('click', function(e) {
+      e.stopPropagation();
+      $(this).toggleClass('active');
+      $('#floating-form-tabs').toggleClass('active');
+    });
+    
+    // Tutup panel saat klik di luar
+    $(document).on('click', function(event) {
+      if (!$(event.target).closest('.shortcut-container').length) {
+        $('#shortcutToggle').removeClass('active');
+        $('#floating-form-tabs').removeClass('active');
+      }
+    });
+
+  }); // END $(document).ready()
+
+  // ========== GLOBAL FUNCTION FOR SCROLL TO FORM ==========
+  function scrollToForm(formBlockId) {
+    var el = document.getElementById(formBlockId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      $('.form-tab-btn').removeClass('active');
+      var $tabPane = $('.tab-pane.show.active');
+      var idx = $tabPane.find('[id^=form-block-]').toArray().findIndex(div => div.id === formBlockId);
+      if (idx !== -1) {
+        $('.form-tab-btn').eq(idx).addClass('active');
+        setTimeout(() => $('.form-tab-btn').eq(idx).removeClass('active'), 1500);
+      }
     }
   }
-}
 </script>
 @endsection
